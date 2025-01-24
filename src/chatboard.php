@@ -1,6 +1,6 @@
 <?php
-require_once 'libsql.php';
-require_once 'libconst.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
 session_start();
 
 $user = get_user($_SESSION['uid']);

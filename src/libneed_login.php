@@ -4,6 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 session_start();
 $user = get_user($_SESSION['uid']);
 if (!$user) {
-    header('HTTP/1.1 403 Login First');
+    header('HTTP/1.1 302 Login First');
+    header('Location: /login.html');
     die();
 }

@@ -9,13 +9,8 @@ if (!$target_user) {
     if (isset($_GET['uid'])) {
         header('HTTP/1.1 404 No Such User');
         die('uid不存在');
-    } else {
-        header('HTTP/1.1 302 Login First');
-        header('Location: /');
-        die();
-    }
+    } else require_once $_SERVER['DOCUMENT_ROOT'].'/libneed_login.php';
 }
-
 ?>
 <!DOCTYPE html>
 <html>
