@@ -1,18 +1,11 @@
 <?php
-ini_set('display_errors', 1);
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('HTTP/1.1 405 Method Not Allowed');
-    die();
-}
+// ini_set('display_errors', 1);
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
-session_start();
+require_once $_SERVER['DOCUMENT_ROOT'] .'/libneed_login.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/libmust_method.php';
+must_method('POST');
 
-$user = get_user($_SESSION['uid']);
-if (!$user) {
-    header('HTTP/1.1 403 Login First');
-    die();
-}
 $file = require_args($_FILES['file']);
 if ($file['error'] > 0) {
     header('HTTP/1.1 500 Internal Error');

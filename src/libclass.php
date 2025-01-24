@@ -1,7 +1,7 @@
 <?php
 if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
-require_once 'libsql.php';
-require_once 'libconst.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
 
 class User {
     public string $uid;
