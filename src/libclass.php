@@ -12,7 +12,11 @@ class User {
         $this->psw = $psw;
     }
     public function save(): string {
-        return sql_register($this);
+        if (get_user($this->uid)) { // 如果用户存在
+            return update_user($this);
+        } else {
+            return sql_register($this);
+        }
     }
     static function from_serialized(string $string): User {
         $obj = unserialize($string);

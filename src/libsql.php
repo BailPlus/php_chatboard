@@ -29,7 +29,7 @@ if ($conn->connect_error) {
 function close($stmt): void {
     global $conn;
     $stmt->close();
-    $conn->close();
+    // $conn->close();
 }
 
 function get_user($uid) {
@@ -53,12 +53,25 @@ function sql_register(User $user):string {
     $serialized_user = serialize($user);
     if (get_user($user->uid)) return '该用户已存在';
     $sql = "INSERT INTO ".USERS_TABLE." (".USERS_UID_COLUMN.", ".USERS_OBJ_COLUMN.") VALUES (?, ?);";
-    echo $sql;
     $stmt = $conn->prepare($sql);
     if (!$stmt) die("连接失败");
     $stmt->bind_param("ss", $user->uid, $serialized_user);
     $sql_exec_status = $stmt->execute();
     close($stmt);
     if (!$sql_exec_status) return '注册失败';
+    else return '';
+}
+
+function update_user(User $user):string {
+    global $conn;
+    $serialized_user = serialize($user);
+    if (!get_user($user->uid)) return '用户不存在';
+    $sql = 'UPDATE '.USERS_TABLE.' SET obj=? WHERE uid="'.$user->uid.'";';
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) die('连接失败');
+    $stmt->bind_param('s', $serialized_user);
+    $sql_exec_status = $stmt->execute();
+    close($stmt);
+    if (!$sql_exec_status) return '更新失败';
     else return '';
 }
