@@ -32,7 +32,8 @@ function close($stmt): void {
     $conn->close();
 }
 
-function get_user(string $uid) {
+function get_user($uid) {
+    if (!$uid) return false;
     global $conn;
     // 查询数据库
     $sql = "SELECT * FROM ".USERS_TABLE." WHERE uid = ?";
