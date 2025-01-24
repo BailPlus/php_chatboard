@@ -1,6 +1,6 @@
 <?php
-header("HTTP/1.1 403 Forbidden");
-$LIBCLASS=true;
+if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
+require_once 'libsql.php';
 
 class User {
     public string $uid;
@@ -9,9 +9,8 @@ class User {
         $this->uid = $uid;
         $this->psw = $psw;
     }
-    public function save() {
-        $string = serialize($this);
-        // 保存到数据库
+    public function save(): string {
+        return sql_register($this);
     }
     static function from_serialized(string $string): User {
         $obj = unserialize($string);

@@ -1,6 +1,6 @@
 <?php
 // error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// ini_set('display_errors', 1);
 if ($_SERVER['REQUEST_METHOD'] != 'POST'):?>
 <!DOCTYPE html>
 <html>
@@ -107,13 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST'):?>
                 loginButton.addEventListener('click', function(event) {
                     event.preventDefault(); // 阻止表单默认提交行为
 
-                    if (uidInput.value.trim() === '') {
+                    if (uidInput.value === '') {
                         alert('用户名不能为空');
                         return;
                     }
 
                     const plainTextPassword = passwordInput.value;
-                    if (plainTextPassword.trim() === '') {
+                    if (plainTextPassword === '') {
                         alert('密码不能为空');
                         return;
                     }
@@ -133,27 +133,32 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST'):?>
             <input type="text" name="uid" placeholder="用户名" id="uid" required>
             <input type="password" name="psw" placeholder="密码" id="psw" required>
             <input type="submit" value="登录" id="login">
-            <a href="/register">注册</a>
+            <a href="/register.php">注册</a>
             <a href="#">进入旁观模式 >>></a>
         </form>
     </body>
 </html>
 <?php die();endif;
 session_start();
-if (!isset($LIBCLASS)) require 'libclass.php';
-if (!isset($LIBVERIFY_ARGS)) require 'libverify_args.php';
-if (!isset($LIBSQL)) require 'libsql.php';
+require_once 'libclass.php';
+require_once 'libverify_args.php';
+require_once 'libsql.php';
 
 // 获取信息
 $uid = require_args($_POST['uid']);
 $psw = require_args($_POST['psw']);
 $user = get_user($uid);
-if (!$user) die('<script>alert("无此用户");location.href=".";</script>');
-if ($psw !== $user->psw) die('<script>alert("密码错误");location.href=".";</script>');
+if (!$user) {
+    header('HTTP/1.1 401 No Such User');
+    die('<script>alert("无此用户");location.href=".";</script>');
+}
+if ($psw !== $user->psw) {
+    header('HTTP/1.1 401 Wrong Password');
+    die('<script>alert("密码错误");location.href=".";</script>');
+}
 else {
     header('HTTP/1.1 302 Found');
     $_SESSION['uid'] = $uid;
     header('Location: /chatboard.php');
     echo '欢迎你，'.$user->uid.'！';
 }
-?>
