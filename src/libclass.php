@@ -27,12 +27,14 @@ class Message {
     public string $last_msgid;
     public string $content;
     public string $posterid;
+    public int $posttime;
     public array $comments;
     public function __construct(string $posterid, string $content) {
         $this->msgid = uniqid();
         $this->last_msgid = get_last_msgid();
         $this->content = $content;
         $this->posterid = $posterid;
+        $this->posttime = time();
         $this->comments = [];
     }
     public function save(): string {

@@ -156,6 +156,12 @@ while ($msgid) {
                 white-space: normal;
             }
 
+            .comment-time {
+                font-size: 12px;
+                color: #888;
+                margin-top: 5px;
+            }
+
             .comment-buttons {
                 display: flex;
                 justify-content: space-between;
@@ -194,10 +200,13 @@ while ($msgid) {
                         </div>
                         <div class="comment-content">
                             <p class="comment-text"><?php echo $msg->content; ?></p>
-                            <div class="comment-buttons">
-                                <button>回复</button>
-                                <button>删除</button>
-                            </div>
+                            <p class="comment-time"><?php echo date('Y-m-d H:i:s',$msg->posttime); ?></p>
+                            <?php if($user): ?>
+                                <div class="comment-buttons">
+                                    <button>回复</button>
+                                    <button>删除</button>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </li>
                 <?php endforeach; ?>
