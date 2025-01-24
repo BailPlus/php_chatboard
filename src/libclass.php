@@ -1,7 +1,5 @@
 <?php
 session_start();
-if ($_SESSION['uid'] === '1') highlight_file(__FILE__);
-
 if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
@@ -28,11 +26,13 @@ class Message {
     public string $msgid;
     public string $last_msgid;
     public string $content;
+    public string $posterid;
     public array $comments;
-    public function __construct(string $content) {
+    public function __construct(string $posterid, string $content) {
         $this->msgid = uniqid();
         $this->last_msgid = get_last_msgid();
         $this->content = $content;
+        $this->posterid = $posterid;
         $this->comments = [];
     }
     public function save(): string {

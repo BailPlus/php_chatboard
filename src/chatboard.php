@@ -1,6 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
+if (DEBUG) ini_set('display_errors', 1);
 session_start();
 
 $user = get_user($_SESSION['uid']);
@@ -10,6 +11,15 @@ if ($user) {
 } else {
     $username = '游客';
     $headphoto_path = DEFAULT_HEADPHOTO;
+}
+
+$msgid = get_last_msgid();
+$msgs = [];
+while ($msgid) {
+    $msg = getmsg($msgid);
+    if (!$msg) die('读取消息时出错');
+    array_push($msgs, $msg);
+    $msgid = $msg->last_msgid;
 }
 ?>
 <!DOCTYPE html>
@@ -164,45 +174,33 @@ if ($user) {
             <?php if ($user): ?>
             <div class="input-container">
                 <form action="/post_comment.php" method="post">
-                    <textarea rows="4" cols="50" placeholder="请输入您的留言"></textarea><br>
+                    <textarea name='comment' rows="4" cols="50" placeholder="请输入您的留言"></textarea><br>
                     <input type="submit">
                 </form>
             </div>
             <?php endif; ?>
 
             <ul class="comment-list">
-                <li class="comment-item">
-                    <div class="comment-header">
-                        <div class="comment-avatar">
-                            <img src="avatar1.jpg">
+                <?php foreach ($msgs as $msg): ?>
+                    <?php $poster = get_user($msg->posterid) ?>
+                    <li class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-avatar">
+                                <a href="/profile.php?uid=<?php echo $poster->uid ?>">
+                                    <img src="<?php echo $poster->headphoto ?>">
+                                </a>
+                            </div>
+                            <span><?php echo $poster->uid ?></span>
                         </div>
-                        <span>用户名1</span>
-                    </div>
-                    <div class="comment-content">
-                        <p class="comment-text">这是一个示例留言。aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
-                        <div class="comment-buttons">
-                            <button>回复</button>
-                            <button>删除</button>
+                        <div class="comment-content">
+                            <p class="comment-text"><?php echo $msg->content; ?></p>
+                            <div class="comment-buttons">
+                                <button>回复</button>
+                                <button>删除</button>
+                            </div>
                         </div>
-                    </div>
-                </li>
-                <?php for ($i = 0; $i < 30; $i++) echo '
-                <li class="comment-item">
-                    <div class="comment-header">
-                        <div class="comment-avatar">
-                            <img src="avatar2.jpg">
-                        </div>
-                        <span>用户名2</span>
-                    </div>
-                    <div class="comment-content">
-                        <p class="comment-text">这<br>是<br>另<br>一<br>个<br>示<br>例<br>留<br>言<br>。</p>
-                        <div class="comment-buttons">
-                            <button>回复</button>
-                            <button>删除</button>
-                        </div>
-                    </div>
-                </li>
-                '; ?>
+                    </li>
+                <?php endforeach; ?>
             </ul>
         </div>
     </body>
