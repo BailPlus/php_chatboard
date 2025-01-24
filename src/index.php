@@ -1,6 +1,12 @@
 <?php
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
+session_start();
+if (isset($_SESSION['uid'])) {  // 已登录用户，直接跳转
+    header('HTTP/1.1 302 Found');
+    header('Location: /chatboard.php');
+    die();
+}
 if ($_SERVER['REQUEST_METHOD'] != 'POST'):?>
 <!DOCTYPE html>
 <html>
@@ -134,12 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST'):?>
             <input type="password" name="psw" placeholder="密码" id="psw" required>
             <input type="submit" value="登录" id="login">
             <a href="/register.php">注册</a>
-            <a href="#">进入旁观模式 >>></a>
+            <a href="/chatboard.php">进入旁观模式 >>></a>
         </form>
     </body>
 </html>
 <?php die();endif;
-session_start();
 require_once 'libclass.php';
 require_once 'libverify_args.php';
 require_once 'libsql.php';
