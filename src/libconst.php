@@ -13,4 +13,8 @@ const SQL_DBNAME = "php_chatboard";
 const SQL_USERS_TABLE = "users";
 const SQL_USERS_UID_COLUMN = "uid";
 const SQL_USERS_OBJ_COLUMN = "obj";
-
+const SQL_MSG_TABLE = "msg";
+const SQL_MSG_MSGID_COLUMN = "msgid";
+const SQL_MSG_OBJ_COLUMN = "obj";
+const SQL_GET_LAST_MSGID_QUERY = "SELECT msgid FROM last_msgid;";
+const SQL_UPDATE_LAST_MSGID_QUERY = "UPDATE last_msgid SET msgid = ?";
