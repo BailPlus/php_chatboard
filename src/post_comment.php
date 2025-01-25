@@ -19,4 +19,5 @@ $msg = new Message($user->uid,$comment,$chatroom->msg_head_ptr) ;
 $msg->save();
 $chatroom->msg_head_ptr = $msg->msgid;
 $chatroom->save();
-echo '<script>alert("发表成功");history.go(-1);</script>';
+?>
+<script>alert("发表成功");location.href = '<?= $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:'/chatboard.php' ?>';</script>

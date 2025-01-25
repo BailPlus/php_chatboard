@@ -1,8 +1,8 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT']. '/libconst.php';
 if (!DEBUG) highlight_file(__FILE__);
-$psw = 'e80ae5f98eecd34343ef3cd75e9de1f1';
-if (!DEBUG || $_GET['psw'] !== $psw) {
+const PSW = '169882577affed3722660a9e7ef0b176';
+if (!DEBUG || $_GET['psw'] !== PSW) {
     header('HTTP/1.1 403 What Are You Looking?');
     die();
 }

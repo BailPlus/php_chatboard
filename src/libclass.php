@@ -17,12 +17,15 @@ class User {
         if (get_user($this->uid)) return update_user($this);  // 如果用户存在
         else return sql_register($this);
     }
-    public function add_friend(string $uid): void {
+    public function add_friend(User $friend): void {
         $chatroom = new Chatroom() ;
         $chatroom->save();
-        $this->friends[$uid] = $chatroom->roomid;
+        $this->friends[$friend->uid] = $chatroom->roomid;
         $return_msg = $this->save();
         if ($return_msg) die($return_msg);
+        $friend->friends[$this->uid] = $chatroom->roomid;
+        $return_msg = $friend->save();
+        if ($return_msg) die($return_msg);  // 不够原子性啊
     }
     static function from_serialized(string $string): User {
         $obj = unserialize($string);

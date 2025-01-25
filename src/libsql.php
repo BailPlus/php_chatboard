@@ -107,21 +107,21 @@ function updatemsg(Message $message):void {
     if (!$sql_exec_status) die('更新失败');
 }
 
-function get_last_msgid():string {
-    global $conn;
-    return $conn->query(SQL_GET_LAST_MSGID_QUERY)->fetch_assoc()['msgid'];
-}
-function update_last_msgid(string $msgid):string {
-    global $conn;
-    $sql = SQL_UPDATE_LAST_MSGID_QUERY;
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) die('连接失败');
-    $stmt->bind_param('s',$msgid);
-    $sql_exec_status = $stmt->execute();
-    close($stmt);
-    if (!$sql_exec_status) return '更新最新msgid失败';
-    else return '';
-}
+// function get_last_msgid():string {
+//     global $conn;
+//     return $conn->query(SQL_GET_LAST_MSGID_QUERY)->fetch_assoc()['msgid'];
+// }
+// function update_last_msgid(string $msgid):string {
+//     global $conn;
+//     $sql = SQL_UPDATE_LAST_MSGID_QUERY;
+//     $stmt = $conn->prepare($sql);
+//     if (!$stmt) die('连接失败');
+//     $stmt->bind_param('s',$msgid);
+//     $sql_exec_status = $stmt->execute();
+//     close($stmt);
+//     if (!$sql_exec_status) return '更新最新msgid失败';
+//     else return '';
+// }
 
 function get_chatroom(string $roomid){
     global $conn;

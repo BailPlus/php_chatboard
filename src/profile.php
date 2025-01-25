@@ -100,8 +100,8 @@ if (!$target_user) {
             <p>用户名：<?php echo $target_user->uid; ?></p>
             <hr>
             <p>头像：</p>
-            <a href="<?php echo $target_user->headphoto; ?>"><img src="<?php echo $target_user->headphoto; ?>"></a>
-            <?php if ($target_user === $current_user): ?>
+            <a href="<?php echo $target_user->headphoto; ?>"><img src="<?php echo $target_user->headphoto; ?>" width="100" height="100"></a>
+            <?php if ($target_user->uid === $current_user->uid):    // 登录用户查看本人?>
                 <form action="/chhead.php" method="post" enctype="multipart/form-data">
                     <input type="file" name="file" required>
                     <input type="submit" value="上传">
@@ -115,7 +115,23 @@ if (!$target_user) {
                     <input type="submit" value="修改" id="chpswbtn">
                 </form>
                 <hr>
+                <p>我的好友：</p>
+                <?php if (!$target_user->friends): ?>
+                    <p>你还没有好友哦，快去添加一个吧！</p>
+                <?php else: ?>
+                    <?php foreach ($target_user->friends as $friend=>$roomid): ?>
+                        <a href="/chatboard.php?roomid=<?= $roomid ?>"><?= $friend ?></a><br>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <hr>
                 <a href="/logout.php">退出登录</a>
+            <?php elseif ($current_user):   // 登录用户查看他人?>
+                <hr>
+                <?php if (array_key_exists($target_user->uid,$current_user->friends)):  // 已经添加为好友 ?>
+                    <a href="/chatboard.php?roomid=<?= $current_user->friends[$target_user->uid] ?>">去聊天</a>
+                <?php else: // 未添加为好友 ?>
+                    <a href="/add_friend.php?uid=<?php echo $target_user->uid; ?>">添加好友</a>
+                <?php endif; ?>
             <?php endif; ?>
         </center>
     </body>

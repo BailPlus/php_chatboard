@@ -15,6 +15,11 @@ if ($user) {
 
 $roomid = (string)$_GET['roomid'];
 $chatroom = get_chatroom($roomid);
+if ($roomid !== '' && !in_array($roomid,$user->friends)) {
+    header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
+    die('这不是你的聊天室');
+};
+
 $msg_head_ptr = $chatroom->msg_head_ptr;
 $msgid = $msg_head_ptr;
 $msgs = [];
