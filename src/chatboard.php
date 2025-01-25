@@ -22,7 +22,7 @@ if ($roomid !== '' && !in_array($roomid,$user->friends)) {
 function display_msg(Message $msg):void {
     global $user;
     $poster = get_user($msg->posterid); ?>
-    <li class="comment-item">
+    <li class="comment-item" id="msg-<?= $msg->msgid ?>">
         <div class="comment-header">
             <div class="comment-avatar">
                 <a href="/profile.php?uid=<?= $poster->uid ?>">
