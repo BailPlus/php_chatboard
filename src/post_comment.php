@@ -9,7 +9,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 if (DEBUG) ini_set('display_errors', 1);
 
 $comment = str_replace("\n",'<br>',htmlspecialchars(require_args($_POST['comment'])));
-$msg = new Message($user->uid,$comment) ;
+$roomid = require_args($_GET['roomid']);
+if ($roomid !== '' && !in_array($roomid,$user->friends)) {
+    header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
+    die('这不是你的聊天室');
+};
+$chatroom = get_chatroom($roomid);
+$msg = new Message($user->uid,$comment,$chatroom->msg_head_ptr) ;
 $msg->save();
-update_last_msgid($msg->msgid);
+$chatroom->msg_head_ptr = $msg->msgid;
+$chatroom->save();
 echo '<script>alert("发表成功");history.go(-1);</script>';

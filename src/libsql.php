@@ -56,7 +56,7 @@ function sql_register(User $user):string {
 function update_user(User $user):string {
     global $conn;
     $serialized_user = serialize($user);
-    if (!get_user($user->uid)) return '用户不存在';
+    // if (!get_user($user->uid)) return '用户不存在';
     $sql = 'UPDATE '.SQL_USERS_TABLE.' SET '.SQL_USERS_OBJ_COLUMN.' = ? WHERE uid="'.$user->uid.'";';
     $stmt = $conn->prepare($sql);
     if (!$stmt) die('连接失败');
@@ -76,13 +76,13 @@ function getmsg(string $msgid){
     $stmt->execute();
     $serialized_msg = $stmt->get_result()->fetch_assoc()['obj'];
     if (!$serialized_msg) return false;
-    $result = unserialize($serialized_msg);
+    $result = Message::from_serialized($serialized_msg);
     if (!$result) return false;
     close($stmt);
     return $result;
 }
 
-function sql_newmsg(Message $message):string {
+function sql_newmsg(Message $message):void {
     global $conn;
     $serialized_msg = serialize($message);
     $sql = 'INSERT INTO '.SQL_MSG_TABLE.' ('.SQL_MSG_MSGID_COLUMN.', '.SQL_MSG_OBJ_COLUMN.') VALUES (?, ?);';
@@ -91,12 +91,11 @@ function sql_newmsg(Message $message):string {
     $stmt->bind_param('ss', $message->msgid,$serialized_msg);
     $sql_exec_status = $stmt->execute();
     close($stmt);
-    if (!$sql_exec_status) return '注册失败';
-    else return '';
+    if (!$sql_exec_status) die('注册消息失败');
 }
 
-function updatemsg(Message $message):string {
-    if (!getmsg($message->msgid)) return '消息不存在';
+function updatemsg(Message $message):void {
+    // if (!getmsg($message->msgid)) die('消息不存在');
     global $conn;
     $serialized_msg = serialize($message);
     $sql = 'UPDATE '.SQL_MSG_TABLE.' SET '.SQL_MSG_OBJ_COLUMN.' = ? WHERE msgid = "'.$message->msgid.'";';
@@ -105,8 +104,7 @@ function updatemsg(Message $message):string {
     $stmt->bind_param('s',$serialized_msg);
     $sql_exec_status = $stmt->execute();
     close($stmt);
-    if (!$sql_exec_status) return '更新失败';
-    else return '';
+    if (!$sql_exec_status) die('更新失败');
 }
 
 function get_last_msgid():string {
@@ -123,4 +121,44 @@ function update_last_msgid(string $msgid):string {
     close($stmt);
     if (!$sql_exec_status) return '更新最新msgid失败';
     else return '';
+}
+
+function get_chatroom(string $roomid){
+    global $conn;
+    $sql = 'SELECT '.SQL_CHATROOM_OBJ_COLUMN.' FROM '.SQL_CHATROOM_TABLE.' WHERE roomid = ?';
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) die('连接失败');
+    $stmt->bind_param('s', $roomid);
+    $stmt->execute();
+    $serialized_room = $stmt->get_result()->fetch_assoc()[SQL_CHATROOM_OBJ_COLUMN];
+    if (!$serialized_room) return false;
+    $result = Chatroom::from_serialized($serialized_room);
+    if (!$result) return false;
+    close($stmt);
+    return $result;
+}
+
+function sql_new_chatroom(Chatroom $chatroom):void {
+    global $conn;
+    $serialized_chatroom = serialize($chatroom);
+    $sql = 'INSERT INTO '.SQL_CHATROOM_TABLE.' ('.SQL_CHATROOM_ROOMID_COLUMN.', '.SQL_CHATROOM_OBJ_COLUMN.') VALUES (?, ?);';
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) die('连接失败');
+    $stmt->bind_param('ss', $chatroom->roomid,$serialized_chatroom);
+    $sql_exec_status = $stmt->execute();
+    close($stmt);
+    if (!$sql_exec_status) die('聊天室注册失败');
+}
+
+function update_chatroom(Chatroom $chatroom):void {
+    // if (!get_chatroom($chatroom->roomid)) die('聊天室不存在');
+    global $conn;
+    $serialized_chatroom = serialize($chatroom);
+    $sql = 'UPDATE '.SQL_CHATROOM_TABLE.' SET '.SQL_CHATROOM_OBJ_COLUMN.' = ? WHERE roomid = "'.$chatroom->roomid.'";';
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) die('连接失败');
+    $stmt->bind_param('s',$serialized_chatroom);
+    $sql_exec_status = $stmt->execute();
+    close($stmt);
+    if (!$sql_exec_status) die('更新失败');
 }

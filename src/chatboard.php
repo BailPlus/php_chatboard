@@ -13,7 +13,10 @@ if ($user) {
     $headphoto_path = DEFAULT_HEADPHOTO;
 }
 
-$msgid = get_last_msgid();
+$roomid = (string)$_GET['roomid'];
+$chatroom = get_chatroom($roomid);
+$msg_head_ptr = $chatroom->msg_head_ptr;
+$msgid = $msg_head_ptr;
 $msgs = [];
 while ($msgid) {
     $msg = getmsg($msgid);
@@ -179,7 +182,7 @@ while ($msgid) {
         <div class="main-content">
             <?php if ($user): ?>
             <div class="input-container">
-                <form action="/post_comment.php" method="post">
+                <form action="/post_comment.php?roomid=<?php echo $roomid; ?>" method="post">
                     <textarea name='comment' rows="4" cols="50" placeholder="请输入您的留言"></textarea><br>
                     <input type="submit">
                 </form>

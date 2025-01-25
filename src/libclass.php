@@ -8,6 +8,7 @@ class User {
     public string $uid;
     public string $psw;
     public string $headphoto = DEFAULT_HEADPHOTO;
+    public array $friends = [];
     public function __construct($uid,$psw) {
         $this->uid = $uid;
         $this->psw = $psw;
@@ -15,6 +16,13 @@ class User {
     public function save(): string {
         if (get_user($this->uid)) return update_user($this);  // 如果用户存在
         else return sql_register($this);
+    }
+    public function add_friend(string $uid): void {
+        $chatroom = new Chatroom() ;
+        $chatroom->save();
+        $this->friends[$uid] = $chatroom->roomid;
+        $return_msg = $this->save();
+        if ($return_msg) die($return_msg);
     }
     static function from_serialized(string $string): User {
         $obj = unserialize($string);
@@ -29,23 +37,40 @@ class Message {
     public string $posterid;
     public int $posttime;
     public array $comments;
-    public function __construct(string $posterid, string $content) {
+    public function __construct(string $posterid, string $content, string $last_msgid) {
         $this->msgid = uniqid();
-        $this->last_msgid = get_last_msgid();
+        $this->last_msgid = $last_msgid;
         $this->content = $content;
         $this->posterid = $posterid;
         $this->posttime = time();
         $this->comments = [];
     }
-    public function save(): string {
-        if (getmsg($this->msgid)) return updatemsg($this);
-        else return sql_newmsg($this);
+    public function save():void {
+        if (getmsg($this->msgid)) updatemsg($this);
+        else sql_newmsg($this);
     }
-    public function comment(string $msgid):string {
+    public function comment(string $msgid):void {
         array_push($this->comments, $msgid);
-        return $this->save();
+        $this->save();
     }
     static function from_serialized(string $string): Message {
+        $obj = unserialize($string);
+        return $obj;
+    }
+}
+
+class Chatroom {
+    public string $roomid;
+    public string $msg_head_ptr;
+    public function __construct() {
+        $this->roomid = uniqid();
+        $this->msg_head_ptr = '';
+    }
+    public function save():void {
+        if (get_chatroom($this->roomid)) update_chatroom($this);
+        else sql_new_chatroom($this);
+    }
+    public static function from_serialized(string $string): Chatroom {
         $obj = unserialize($string);
         return $obj;
     }

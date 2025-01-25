@@ -14,5 +14,6 @@ if ($oldpsw != $user->psw) {
     die();
 }
 $user->psw = $newpsw;
-$user->save();
+$return_msg = $user->save();
+if ($return_msg) die($return_msg);
 echo '<script>alert("修改成功");location.href="/logout.php";</script>';
