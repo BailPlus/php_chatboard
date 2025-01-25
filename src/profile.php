@@ -1,5 +1,4 @@
 <?php
-// ini_set('display_errors', 1);
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 session_start();
 
@@ -97,10 +96,10 @@ if (!$target_user) {
             <h1>个人信息</h1>
         </div>
         <center>
-            <p>用户名：<?php echo $target_user->uid; ?></p>
+            <p>用户名：<?= $target_user->uid; ?></p>
             <hr>
             <p>头像：</p>
-            <a href="<?php echo $target_user->headphoto; ?>"><img src="<?php echo $target_user->headphoto; ?>" width="100" height="100"></a>
+            <a href="<?= $target_user->headphoto; ?>"><img src="<?= $target_user->headphoto; ?>" width="100" height="100"></a>
             <?php if ($target_user->uid === $current_user->uid):    // 登录用户查看本人?>
                 <form action="/chhead.php" method="post" enctype="multipart/form-data">
                     <input type="file" name="file" required>
@@ -130,7 +129,7 @@ if (!$target_user) {
                 <?php if (array_key_exists($target_user->uid,$current_user->friends)):  // 已经添加为好友 ?>
                     <a href="/chatboard.php?roomid=<?= $current_user->friends[$target_user->uid] ?>">去聊天</a>
                 <?php else: // 未添加为好友 ?>
-                    <a href="/add_friend.php?uid=<?php echo $target_user->uid; ?>">添加好友</a>
+                    <a href="/add_friend.php?uid=<?= $target_user->uid; ?>">添加好友</a>
                 <?php endif; ?>
             <?php endif; ?>
         </center>

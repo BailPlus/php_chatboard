@@ -1,6 +1,4 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libmust_method.php';
 must_method('POST');
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';

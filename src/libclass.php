@@ -36,13 +36,15 @@ class User {
 class Message {
     public string $msgid;
     public string $last_msgid;
+    public string $roomid = '';  // 防止跨聊天室回复
     public string $content;
     public string $posterid;
     public int $posttime;
     public array $comments;
-    public function __construct(string $posterid, string $content, string $last_msgid) {
+    public function __construct(string $roomid, string $posterid, string $content, string $last_msgid) {
         $this->msgid = uniqid();
         $this->last_msgid = $last_msgid;
+        $this->roomid = $roomid;
         $this->content = $content;
         $this->posterid = $posterid;
         $this->posttime = time();

@@ -3,7 +3,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
-if (DEBUG) ini_set('display_errors', 1);
 session_start();
 
 $token = require_args($_GET['token']);
