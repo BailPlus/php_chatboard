@@ -69,7 +69,7 @@ function display_msg(Message $msg):void {
                 </div>
             <?php endif; ?>
             <ul class="comment-list">
-                <?php foreach (list_all_messages($msg->last_comment_msgid) as $submsg) display_msg(Message::from_msgid($submsg->msgid)); ?>
+                <?php foreach (list_all_messages($msg->hang_msg_ptr) as $submsg) display_msg(Message::from_msgid($submsg->msgid)); ?>
             </ul>
         </div>
     </li>
@@ -249,7 +249,7 @@ function display_msg(Message $msg):void {
             <?php endif; ?>
 
             <ul class="comment-list">
-                <?php foreach (list_all_messages($chatroom->msg_head_ptr) as $msg) display_msg($msg);?>
+                <?php foreach (list_all_messages($chatroom->hang_msg_ptr) as $msg) display_msg($msg);?>
             </ul>
         </div>
     </body>

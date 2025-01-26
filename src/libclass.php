@@ -9,6 +9,7 @@ class User {
     public string $psw;
     public string $headphoto = DEFAULT_HEADPHOTO;
     public array $friends = [];
+    public bool $isadmin = false;
     public function __construct($uid,$psw) {
         $this->uid = $uid;
         $this->psw = $psw;
@@ -36,7 +37,29 @@ class User {
     }
 }
 
-class Message {
+abstract class Hangable {
+    public string $hang_msg_ptr;
+    public function hang(Message $message):void {
+        $message->last_msgid = $this->hang_msg_ptr;
+        $this->hang_msg_ptr = $message->msgid;
+        $this->save();
+    }
+    public function delete_msg(Message $message_want_to_delete): void {
+        $now_msg = Message::from_msgid($this->hang_msg_ptr);
+        if ($now_msg->msgid === $message_want_to_delete->msgid) {
+            $this->hang_msg_ptr = $now_msg->last_msgid;
+            return;
+        }
+        while ($now_msg->last_msgid !== $message_want_to_delete->msgid) {
+            $now_msg = Message::from_msgid($now_msg->last_msgid);
+            if (!$now_msg->last_msgid) die('在该Hangable找不到要删除的Message');
+        }
+        $now_msg->last_msgid = $message_want_to_delete->last_msgid;
+        $now_msg->save();
+    }
+}
+
+class Message extends Hangable{
     public string $msgid;
     public string $last_msgid;
     public string $roomid = '';  // 防止跨聊天室回复
@@ -44,7 +67,7 @@ class Message {
     public string $posterid;
     public int $posttime;
     public array $likes = [];
-    public string $last_comment_msgid = '';
+    public string $hang_msg_ptr = '';
     public function __construct(string $roomid, string $posterid, string $content, string $last_msgid) {
         $this->msgid = uniqid();
         $this->last_msgid = $last_msgid;
@@ -58,10 +81,12 @@ class Message {
         else sql_newmsg($this);
     }
     public function comment(string $uid,string $content):void {
-        $comment_msg = new Message($this->roomid,$uid,$content,$this->last_comment_msgid);
+        $comment_msg = new Message($this->roomid,$uid,$content,$this->hang_msg_ptr);
         $comment_msg->save();
-        $this->last_comment_msgid = $comment_msg->msgid;
-        $this->save();
+        $this->hang($comment_msg);
+    }
+    public function delete():void {
+        // 只是解链，而不从数据库删除消息对象
     }
     static function from_serialized(string $string): Message {
         $obj = unserialize($string);
@@ -72,12 +97,12 @@ class Message {
     }
 }
 
-class Chatroom {
+class Chatroom extends Hangable{
     public string $roomid;
-    public string $msg_head_ptr;
+    public string $hang_msg_ptr;
     public function __construct() {
         $this->roomid = uniqid();
-        $this->msg_head_ptr = '';
+        $this->hang_msg_ptr = '';
     }
     public function save():void {
         if (get_chatroom($this->roomid)) update_chatroom($this);

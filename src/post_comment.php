@@ -20,9 +20,9 @@ if ($comment_father) {  // 评论
     if ($comment_father->roomid === $chatroom->roomid) $comment_father->comment($user->uid,$comment);
     else { header('HTTP/1.1 400 Can\'t Comment Across Chatrooms'); die(); }
 } else {    // 发表消息
-    $msg = new Message($chatroom->roomid,$user->uid,$comment,$chatroom->msg_head_ptr) ;
+    $msg = new Message($chatroom->roomid,$user->uid,$comment,$chatroom->hang_msg_ptr) ;
     $msg->save();    
-    $chatroom->msg_head_ptr = $msg->msgid;
+    $chatroom->hang_msg_ptr = $msg->msgid;
     $chatroom->save();
 }
 ?>
