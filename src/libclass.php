@@ -40,7 +40,8 @@ class Message {
     public string $content;
     public string $posterid;
     public int $posttime;
-    public array $comments;
+    public array $likes = [];
+    public array $comments = [];
     public function __construct(string $roomid, string $posterid, string $content, string $last_msgid) {
         $this->msgid = uniqid();
         $this->last_msgid = $last_msgid;
@@ -48,7 +49,6 @@ class Message {
         $this->content = $content;
         $this->posterid = $posterid;
         $this->posttime = time();
-        $this->comments = [];
     }
     public function save():void {
         if (getmsg($this->msgid)) updatemsg($this);
@@ -61,6 +61,9 @@ class Message {
     static function from_serialized(string $string): Message {
         $obj = unserialize($string);
         return $obj;
+    }
+    static function from_msgid(string $msgid) {
+        return getmsg($msgid);
     }
 }
 

@@ -20,8 +20,10 @@ if ($roomid !== '' && !in_array($roomid,$user->friends)) {
     die('这不是你的聊天室');
 };
 
+$csrftoken = get_csrftoken();
+
 function display_msg(Message $msg):void {
-    global $user;
+    global $user,$csrftoken;
     $poster = get_user($msg->posterid); ?>
     <li class="comment-item" id="msg-<?= $msg->msgid ?>">
         <div class="comment-header">
@@ -37,6 +39,13 @@ function display_msg(Message $msg):void {
             <p class="comment-time"><?= date('Y-m-d H:i:s',$msg->posttime); ?></p>
             <?php if($user): ?>
                 <div class="comment-buttons">
+                    <form action="/like.php?msgid=<?= $msg->msgid ?>" method="post">
+                        <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
+                        <button>
+                            <img src="<?php echo (in_array($user->uid,$msg->likes))?'/img/liked.png':'/img/like.png' ?>" width="25" height="25">
+                            <?= count($msg->likes) ?>
+                        </button>
+                    </form>
                     <button onclick="comment('<?= $msg->msgid ?>');">评论</button>
                     <button>删除</button>
                 </div>
@@ -225,7 +234,7 @@ while ($msgid) {
             <div class="input-container">
                 <form action="/post_comment.php?roomid=<?= $roomid; ?>" method="post" id="postCommentForm">
                     <textarea name='comment' rows="4" cols="50" id="commentTextarea" placeholder="请输入您的留言"></textarea><br>
-                    <input type="hidden" name="csrftoken" value="<?= get_csrftoken() ?>">
+                    <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
                     <input type="submit">
                 </form>
             </div>
