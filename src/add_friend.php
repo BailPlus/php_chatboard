@@ -7,7 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
 verify_csrftoken();
 
-$friend = User::from_uid(require_args($_GET['uid']));
+$friend = User::from_id(require_args($_GET['uid']));
 if (!$friend) {
     header('HTTP/1.1 404 No Such User');
     die();

@@ -4,7 +4,11 @@ if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
 
-class User {
+interface From_id_able {
+    public static function from_id($id);
+}
+
+class User implements From_id_able{
     public string $uid;
     public string $psw;
     public string $headphoto = DEFAULT_HEADPHOTO;
@@ -32,37 +36,36 @@ class User {
         $obj = unserialize($string);
         return $obj;
     }
-    public static function from_uid($uid) {
-        return get_user($uid);
+    public static function from_id($id) {
+        return get_user($id);
     }
 }
 
-abstract class Hangable {
+abstract class Hangable implements From_id_able{
     public string $hang_msg_ptr;
-    public function hang(Message $message):void {
-        $message->last_msgid = $this->hang_msg_ptr;
-        $this->hang_msg_ptr = $message->msgid;
-        $this->save();
-    }
+    abstract public function hang(Message $message):void ;
     public function delete_msg(Message $message_want_to_delete): void {
-        $now_msg = Message::from_msgid($this->hang_msg_ptr);
+        $now_msg = Message::from_id($this->hang_msg_ptr);
         if ($now_msg->msgid === $message_want_to_delete->msgid) {
             $this->hang_msg_ptr = $now_msg->last_msgid;
+            $this->save();
             return;
         }
         while ($now_msg->last_msgid !== $message_want_to_delete->msgid) {
-            $now_msg = Message::from_msgid($now_msg->last_msgid);
+            $now_msg = Message::from_id($now_msg->last_msgid);
             if (!$now_msg->last_msgid) die('在该Hangable找不到要删除的Message');
         }
         $now_msg->last_msgid = $message_want_to_delete->last_msgid;
         $now_msg->save();
     }
+    abstract public static function from_id($id);
 }
 
 class Message extends Hangable{
     public string $msgid;
     public string $last_msgid;
     public string $roomid = '';  // 防止跨聊天室回复
+    public string $hangable_id;
     public string $content;
     public string $posterid;
     public int $posttime;
@@ -72,6 +75,7 @@ class Message extends Hangable{
         $this->msgid = uniqid();
         $this->last_msgid = $last_msgid;
         $this->roomid = $roomid;
+        $this->hangable_id = $roomid;
         $this->content = $content;
         $this->posterid = $posterid;
         $this->posttime = time();
@@ -79,6 +83,13 @@ class Message extends Hangable{
     public function save():void {
         if (getmsg($this->msgid)) updatemsg($this);
         else sql_newmsg($this);
+    }
+    public function hang(Message $message):void {
+        $message->last_msgid = $this->hang_msg_ptr;
+        $message->hangable_id = $this->msgid;
+        $message->save();
+        $this->hang_msg_ptr = $message->msgid;
+        $this->save();
     }
     public function comment(string $uid,string $content):void {
         $comment_msg = new Message($this->roomid,$uid,$content,$this->hang_msg_ptr);
@@ -88,11 +99,11 @@ class Message extends Hangable{
     public function delete():void {
         // 只是解链，而不从数据库删除消息对象
     }
-    static function from_serialized(string $string): Message {
+    public static function from_serialized(string $string): Message {
         $obj = unserialize($string);
         return $obj;
     }
-    static function from_msgid($msgid) {
+    public static function from_id($msgid) {
         return getmsg($msgid);
     }
 }
@@ -108,11 +119,18 @@ class Chatroom extends Hangable{
         if (get_chatroom($this->roomid)) update_chatroom($this);
         else sql_new_chatroom($this);
     }
+    public function hang(Message $message):void {
+        $message->last_msgid = $this->hang_msg_ptr;
+        $message->hangable_id = $this->roomid;
+        $message->save();
+        $this->hang_msg_ptr = $message->msgid;
+        $this->save();
+    }
     public static function from_serialized(string $string): Chatroom {
         $obj = unserialize($string);
         return $obj;
     }
-    public static function from_roomid($roomid) {
+    public static function from_id($roomid) {
         return get_chatroom($roomid);
     }
 }

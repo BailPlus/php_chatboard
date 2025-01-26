@@ -19,7 +19,7 @@ if (!$uid) {
     header('HTTP/1.1 401 Unauthorited');
     die();
 }
-$user = User::from_uid($uid);
+$user = User::from_id($uid);
 if (!$user) {
     $psw = uniqid();
     $user = new User($uid,hash('sha256',$psw));

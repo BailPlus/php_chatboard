@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libcsrftoken.php';
 session_start();
 
-$user = User::from_uid($_SESSION['uid']);
+$user = User::from_id($_SESSION['uid']);
 if ($user) {
     $username = $user->uid;
     $headphoto_path = $user->headphoto;
@@ -14,7 +14,7 @@ if ($user) {
 }
 
 $roomid = (string)$_GET['roomid'];
-$chatroom = Chatroom::from_roomid($roomid);
+$chatroom = Chatroom::from_id($roomid);
 if ($roomid !== '' && !in_array($roomid,$user->friends)) {
     header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
     die('这不是你的聊天室');
@@ -26,7 +26,7 @@ function list_all_messages(string $msg_head_ptr):array {
     $msgid = $msg_head_ptr;
     $msgs = [];
     while ($msgid) {
-        $msg = Message::from_msgid($msgid);
+        $msg = Message::from_id($msgid);
         if (!$msg) die('读取消息时出错');
         array_push($msgs, $msg);
         $msgid = $msg->last_msgid;
@@ -36,7 +36,8 @@ function list_all_messages(string $msg_head_ptr):array {
 
 function display_msg(Message $msg):void {
     global $user,$csrftoken;
-    $poster = User::from_uid($msg->posterid); ?>
+    $poster = User::from_id($msg->posterid);
+     ?>
     <li class="comment-item" id="msg-<?= $msg->msgid ?>">
         <div class="comment-header">
             <div class="comment-avatar">
@@ -61,15 +62,18 @@ function display_msg(Message $msg):void {
                     <button onclick="comment('<?= $msg->msgid ?>');">
                         <img src="/img/comment.jpeg" width="25" height="25">
                     </button>
-                    <?php if ($msg->posterid === $user->uid): ?>
-                        <button>
-                            <img src="/img/delete.png" width="25" height="25">
-                        </button>
-                    <?php  endif ?>
+                    <?php if ($msg->posterid === $user->uid || $user->isadmin): ?>
+                        <form action="/delmsg.php?msgid=<?= $msg->msgid ?>&hangable_id=<?= $msg->hangable_id ?>" method="post">
+                            <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
+                            <button onclick="delmsg('');">
+                                <img src="/img/delete.png" width="25" height="25">
+                            </button>
+                        </form>
+                    <?php endif ?>
                 </div>
             <?php endif; ?>
             <ul class="comment-list">
-                <?php foreach (list_all_messages($msg->hang_msg_ptr) as $submsg) display_msg(Message::from_msgid($submsg->msgid)); ?>
+                <?php foreach (list_all_messages($msg->hang_msg_ptr) as $submsg) display_msg(Message::from_id($submsg->msgid)) ?>
             </ul>
         </div>
     </li>
@@ -249,7 +253,7 @@ function display_msg(Message $msg):void {
             <?php endif; ?>
 
             <ul class="comment-list">
-                <?php foreach (list_all_messages($chatroom->hang_msg_ptr) as $msg) display_msg($msg);?>
+                <?php foreach (list_all_messages($chatroom->hang_msg_ptr) as $msg) display_msg($msg); ?>
             </ul>
         </div>
     </body>

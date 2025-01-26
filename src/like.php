@@ -7,7 +7,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libneed_login.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 
-$msg = Message::from_msgid(require_args($_GET['msgid']));
+$msg = Message::from_id(require_args($_GET['msgid']));
 if (!$msg) { header('HTTP/1.1 404 No Such Message'); die(); }
 
 if (in_array($user->uid, $msg->likes)) {

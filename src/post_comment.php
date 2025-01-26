@@ -9,8 +9,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
 verify_csrftoken();
 
 $comment = require_args($_POST['comment']);
-$chatroom = Chatroom::from_roomid(require_args($_GET['roomid']));
-$comment_father = Message::from_msgid($_GET['msgid']);
+$chatroom = Chatroom::from_id(require_args($_GET['roomid']));
+$comment_father = Message::from_id($_GET['msgid']);
 
 if (!$chatroom) { header('HTTP/1.1 404 No Such Chatroom'); die(); }
 if ($chatroom->roomid !== '' && !in_array($chatroom->roomid,$user->friends)) { header('HTTP/1.1 403 This Chatroom Isn\'t Yours'); die(); }

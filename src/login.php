@@ -8,7 +8,7 @@ session_start();
 // 获取信息
 $uid = require_args($_POST['uid']);
 $psw = require_args($_POST['psw']);
-$user = User::from_uid($uid);
+$user = User::from_id($uid);
 if (!$user) {
     header('HTTP/1.1 401 No Such User');
     die('<script>alert("无此用户");location.href="/login.html";</script>');
