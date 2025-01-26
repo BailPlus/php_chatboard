@@ -8,7 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
 verify_csrftoken();
 
-$comment = str_replace("\n",'<br>',htmlspecialchars(require_args($_POST['comment'])));
+$comment = require_args($_POST['comment']);
 $chatroom = Chatroom::from_roomid(require_args($_GET['roomid']));
 $comment_father = Message::from_msgid($_GET['msgid']);
 

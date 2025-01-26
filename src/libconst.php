@@ -2,7 +2,7 @@
 if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
 
 const DEBUG = false;
-const DEBUG_PSW = '1d2af432b5c9b389b8efde512f9f9c2d';
+const DEBUG_PSW = '4b50b153d880801d00ad5bb1a4c9e4bc';
 if (DEBUG) ini_set('display_errors', 1);
 
 const WWWCQUPT_SALT = '0523b3c3c2c54271e1612ec0e590d122';

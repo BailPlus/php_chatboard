@@ -99,7 +99,7 @@ $csrftoken = get_csrftoken();
             <h1>个人信息</h1>
         </div>
         <center>
-            <p>用户名：<?= $target_user->uid; ?></p>
+            <p>用户名：<?= htmlspecialchars($target_user->uid, ENT_QUOTES) ?></p>
             <hr>
             <p>头像：</p>
             <a href="<?= $target_user->headphoto; ?>"><img src="<?= $target_user->headphoto; ?>" width="100" height="100"></a>
@@ -124,7 +124,7 @@ $csrftoken = get_csrftoken();
                     <p>你还没有好友哦，快去添加一个吧！</p>
                 <?php else: ?>
                     <?php foreach ($target_user->friends as $friend=>$roomid): ?>
-                        <a href="/chatboard.php?roomid=<?= $roomid ?>"><?= $friend ?></a><br>
+                        <a href="/chatboard.php?roomid=<?= $roomid ?>"><?= htmlspecialchars($friend, ENT_QUOTES) ?></a><br>
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <hr>
@@ -134,7 +134,7 @@ $csrftoken = get_csrftoken();
                 <?php if (array_key_exists($target_user->uid,$current_user->friends)):  // 已经添加为好友 ?>
                     <a href="/chatboard.php?roomid=<?= $current_user->friends[$target_user->uid] ?>">去聊天</a>
                 <?php else: // 未添加为好友 ?>
-                    <form action="/add_friend.php?uid=<?= $target_user->uid; ?>" method="post">
+                    <form action="/add_friend.php?uid=<?= urlencode($target_user->uid) ?>" method="post">
                         <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
                         <input type="submit" value="添加好友">
                     </form>

@@ -40,21 +40,21 @@ function display_msg(Message $msg):void {
     <li class="comment-item" id="msg-<?= $msg->msgid ?>">
         <div class="comment-header">
             <div class="comment-avatar">
-                <a href="/profile.php?uid=<?= $poster->uid ?>">
+                <a href="/profile.php?uid=<?= urlencode($poster->uid) ?>">
                     <img src="<?= $poster->headphoto ?>">
                 </a>
             </div>
-            <span><?= $poster->uid ?></span>
+            <span><?= htmlspecialchars($poster->uid, ENT_QUOTES) ?></span>
         </div>
         <div class="comment-content">
-            <p class="comment-text"><?= $msg->content; ?></p>
+            <p class="comment-text"><?= str_replace("\n",'<br>',htmlspecialchars($msg->content, ENT_QUOTES)) ?></p>
             <p class="comment-time"><?= date('Y-m-d H:i:s',$msg->posttime); ?></p>
             <?php if($user): ?>
                 <div class="comment-buttons">
                     <form action="/like.php?msgid=<?= $msg->msgid ?>" method="post">
                         <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
                         <button>
-                            <img src="<?php echo (in_array($user->uid,$msg->likes))?'/img/liked.png':'/img/like.png' ?>" width="25" height="25">
+                            <img src="<?= (in_array($user->uid,$msg->likes))?'/img/liked.png':'/img/like.png' ?>" width="25" height="25">
                             <?= count($msg->likes) ?>
                         </button>
                     </form>
@@ -234,7 +234,7 @@ function display_msg(Message $msg):void {
             <h1>留言板</h1>
             <div class="user-info">
                 <a href="/profile.php"><img src="<?= $headphoto_path; ?>" class="user-avatar"></a>
-                <span><?= $username; ?></span>
+                <span><?= htmlspecialchars($username, ENT_QUOTES) ?></span>
             </div>
         </div>
         <div class="main-content" id="mainContentDiv">
