@@ -5,6 +5,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 session_start();
 
+$server_nonce = require_args($_GET['nonce']);
+$server_time = (int)substr($server_nonce,0,10);
+$server_hash = substr($server_nonce,10);
+if (time() - $server_time > WWWCQUPT_NONCE_EXPIRE || !hash_equals($server_hash, md5($server_time.WWWCQUPT_SALT))) {
+    header('HTTP/1.1 403 Bad Nonce');
+    die();
+}
 $token = require_args($_GET['token']);
 $time = (string)time();
 $nonce = $time.md5($time.WWWCQUPT_SALT);

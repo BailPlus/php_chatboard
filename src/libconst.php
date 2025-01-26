@@ -6,6 +6,7 @@ const DEBUG_PSW = '169882577affed3722660a9e7ef0b176';
 if (DEBUG) ini_set('display_errors', 1);
 
 const WWWCQUPT_SALT = '0523b3c3c2c54271e1612ec0e590d122';
+const WWWCQUPT_NONCE_EXPIRE = 3;
 const CSRFTOKEN_EXPIRE = 300;
 
 const DEFAULT_HEADPHOTO = "/img/headphoto/default.svg";
