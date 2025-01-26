@@ -1,10 +1,10 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libcsrftoken.php';
 session_start();
 
-$current_user = get_user($_SESSION['uid']);
-$target_user = isset($_GET['uid'])?get_user($_GET['uid']):$current_user; // 要查看的用户id
+$current_user = User::from_uid($_SESSION['uid']);
+$target_user = isset($_GET['uid'])?User::from_uid($_GET['uid']):$current_user; // 要查看的用户id
 if (!$target_user) {
     if (isset($_GET['uid'])) {
         header('HTTP/1.1 404 No Such User');

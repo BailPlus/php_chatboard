@@ -3,13 +3,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libmust_method.php';
 must_method('POST');
 require_once $_SERVER['DOCUMENT_ROOT'].'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libverify_args.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 session_start();
 
 // 获取信息
 $uid = require_args($_POST['uid']);
 $psw = require_args($_POST['psw']);
-$user = get_user($uid);
+$user = User::from_uid($uid);
 if (!$user) {
     header('HTTP/1.1 401 No Such User');
     die('<script>alert("无此用户");location.href="/login.html";</script>');

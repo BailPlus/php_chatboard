@@ -1,10 +1,10 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libcsrftoken.php';
 session_start();
 
-$user = get_user($_SESSION['uid']);
+$user = User::from_uid($_SESSION['uid']);
 if ($user) {
     $username = $user->uid;
     $headphoto_path = $user->headphoto;
@@ -14,7 +14,7 @@ if ($user) {
 }
 
 $roomid = (string)$_GET['roomid'];
-$chatroom = get_chatroom($roomid);
+$chatroom = Chatroom::from_roomid($roomid);
 if ($roomid !== '' && !in_array($roomid,$user->friends)) {
     header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
     die('这不是你的聊天室');
@@ -24,7 +24,7 @@ $csrftoken = get_csrftoken();
 
 function display_msg(Message $msg):void {
     global $user,$csrftoken;
-    $poster = get_user($msg->posterid); ?>
+    $poster = User::from_uid($msg->posterid); ?>
     <li class="comment-item" id="msg-<?= $msg->msgid ?>">
         <div class="comment-header">
             <div class="comment-avatar">
@@ -51,7 +51,7 @@ function display_msg(Message $msg):void {
                 </div>
             <?php endif; ?>
             <ul class="comment-list">
-                <?php foreach ($msg->comments as $submsg) display_msg(getmsg($submsg)); ?>
+                <?php foreach ($msg->comments as $submsg) display_msg(Message::from_msgid($submsg)); ?>
             </ul>
         </div>
     </li>
@@ -62,7 +62,7 @@ $msg_head_ptr = $chatroom->msg_head_ptr;
 $msgid = $msg_head_ptr;
 $msgs = [];
 while ($msgid) {
-    $msg = getmsg($msgid);
+    $msg = Message::from_msgid($msgid);
     if (!$msg) die('读取消息时出错');
     array_push($msgs, $msg);
     $msgid = $msg->last_msgid;

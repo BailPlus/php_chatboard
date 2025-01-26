@@ -1,6 +1,5 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
-require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 session_start();
@@ -20,7 +19,7 @@ if (!$uid) {
     header('HTTP/1.1 401 Unauthorited');
     die();
 }
-$user = get_user($uid);
+$user = User::from_uid($uid);
 if (!$user) {
     $psw = uniqid();
     $user = new User($uid,hash('sha256',$psw));

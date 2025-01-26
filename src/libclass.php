@@ -31,6 +31,9 @@ class User {
         $obj = unserialize($string);
         return $obj;
     }
+    public static function from_uid(string $uid) {
+        return get_user($uid);
+    }
 }
 
 class Message {
@@ -81,5 +84,8 @@ class Chatroom {
     public static function from_serialized(string $string): Chatroom {
         $obj = unserialize($string);
         return $obj;
+    }
+    public static function from_roomid(string $roomid) {
+        return get_chatroom($roomid);
     }
 }

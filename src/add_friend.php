@@ -3,11 +3,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libmust_method.php';
 must_method('POST');
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libneed_login.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
-require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
 verify_csrftoken();
 
-$friend = get_user(require_args($_GET['uid']));
+$friend = User::from_uid(require_args($_GET['uid']));
 if (!$friend) {
     header('HTTP/1.1 404 No Such User');
     die();

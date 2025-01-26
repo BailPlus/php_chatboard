@@ -4,7 +4,6 @@ must_method('POST');
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
 verify_csrftoken();
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libneed_login.php';
-require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
 
 $oldpsw = require_args($_POST['oldpsw']);

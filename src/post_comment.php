@@ -3,7 +3,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libmust_method.php';
 must_method('POST');
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libneed_login.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
-require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
@@ -11,14 +10,14 @@ verify_csrftoken();
 
 $comment = str_replace("\n",'<br>',htmlspecialchars(require_args($_POST['comment'])));
 $roomid = require_args($_GET['roomid']);
-$comment_father = getmsg($_GET['msgid']);
+$comment_father = Message::from_msgid($_GET['msgid']);
 
 if ($roomid !== '' && !in_array($roomid,$user->friends)) {
     header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
     die('这不是你的聊天室');
 };
 
-$chatroom = get_chatroom($roomid);
+$chatroom = Chatroom::from_roomid($roomid);
 $msg = new Message($roomid,$user->uid,$comment,$chatroom->msg_head_ptr) ;
 $msg->save();
 
