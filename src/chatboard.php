@@ -1,6 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libcsrftoken.php';
 session_start();
 
 $user = get_user($_SESSION['uid']);
@@ -224,6 +225,7 @@ while ($msgid) {
             <div class="input-container">
                 <form action="/post_comment.php?roomid=<?= $roomid; ?>" method="post" id="postCommentForm">
                     <textarea name='comment' rows="4" cols="50" id="commentTextarea" placeholder="请输入您的留言"></textarea><br>
+                    <input type="hidden" name="csrftoken" value="<?= get_csrftoken() ?>">
                     <input type="submit">
                 </form>
             </div>

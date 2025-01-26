@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/libcsrftoken.php';
 session_start();
 
 $current_user = get_user($_SESSION['uid']);
@@ -10,6 +11,8 @@ if (!$target_user) {
         die('uid不存在');
     } else require_once $_SERVER['DOCUMENT_ROOT'].'/libneed_login.php';
 }
+
+$csrftoken = get_csrftoken();
 ?>
 <!DOCTYPE html>
 <html>
@@ -102,12 +105,14 @@ if (!$target_user) {
             <a href="<?= $target_user->headphoto; ?>"><img src="<?= $target_user->headphoto; ?>" width="100" height="100"></a>
             <?php if ($target_user->uid === $current_user->uid):    // 登录用户查看本人?>
                 <form action="/chhead.php" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
                     <input type="file" name="file" required>
                     <input type="submit" value="上传">
                 </form>
                 <hr>
                 <p>修改密码：</p>
                 <form action="/chpsw.php" method="post">
+                    <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
                     <input type="password" name="oldpsw" id="oldpsw" placeholder="原密码" required><br>
                     <input type="password" name="newpsw" id="psw1" placeholder="新密码" required><br>
                     <input type="password" id="psw2" placeholder="重复密码" required><br>
@@ -129,7 +134,10 @@ if (!$target_user) {
                 <?php if (array_key_exists($target_user->uid,$current_user->friends)):  // 已经添加为好友 ?>
                     <a href="/chatboard.php?roomid=<?= $current_user->friends[$target_user->uid] ?>">去聊天</a>
                 <?php else: // 未添加为好友 ?>
-                    <a href="/add_friend.php?uid=<?= $target_user->uid; ?>">添加好友</a>
+                    <form action="/add_friend.php?uid=<?= $target_user->uid; ?>" method="post">
+                        <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
+                        <input type="submit" value="添加好友">
+                    </form>
                 <?php endif; ?>
             <?php endif; ?>
         </center>

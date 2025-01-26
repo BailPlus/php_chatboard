@@ -67,7 +67,8 @@ function update_user(User $user):string {
     else return '';
 }
 
-function getmsg(string $msgid){
+function getmsg($msgid){
+    if (!$msgid) return false;
     global $conn;
     $sql = 'SELECT '.SQL_MSG_OBJ_COLUMN.' FROM '.SQL_MSG_TABLE.' WHERE msgid = ?';
     $stmt = $conn->prepare($sql);
@@ -123,7 +124,7 @@ function updatemsg(Message $message):void {
 //     else return '';
 // }
 
-function get_chatroom(string $roomid){
+function get_chatroom($roomid){
     global $conn;
     $sql = 'SELECT '.SQL_CHATROOM_OBJ_COLUMN.' FROM '.SQL_CHATROOM_TABLE.' WHERE roomid = ?';
     $stmt = $conn->prepare($sql);

@@ -6,6 +6,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libclass.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
 require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
+verify_csrftoken();
 
 $comment = str_replace("\n",'<br>',htmlspecialchars(require_args($_POST['comment'])));
 $roomid = require_args($_GET['roomid']);

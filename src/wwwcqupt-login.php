@@ -6,7 +6,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 session_start();
 
 $token = require_args($_GET['token']);
-$nonce = md5((string)time().WWWCQUPT_SALT);
+$time = (string)time();
+$nonce = $time.md5($time.WWWCQUPT_SALT);
 $uid = file_get_contents('http://localhost:5000/php-chatboard-login?token='.$token.'&nonce='.$nonce);
 if (!$uid) {
     header('HTTP/1.1 401 Unauthorited');

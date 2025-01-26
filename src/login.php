@@ -14,7 +14,7 @@ if (!$user) {
     header('HTTP/1.1 401 No Such User');
     die('<script>alert("无此用户");location.href="/login.html";</script>');
 }
-if ($psw !== $user->psw) {
+if (!hash_equals($user->psw,$psw)) {
     header('HTTP/1.1 401 Wrong Password');
     die('<script>alert("密码错误");location.href="/login.html";</script>');
 }

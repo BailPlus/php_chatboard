@@ -1,0 +1,13 @@
+<form action="http://localhost/post_comment.php?roomid=" method="post" id="form">
+    <input type="hidden" name="comment" value="CSRF测试">
+    <input type="hidden" name="csrftoken" value="fake_csrftoken">
+</form>
+<form>
+    <input type="text" placeholder="用户名"><br>
+    <input type="password" placeholder="密码">
+</form>
+<input type="submit" form="form" value="登录">
+<!-- <script>
+    form = document.getElementById('form');
+    form.submit();
+</script> -->
