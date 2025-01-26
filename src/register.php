@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libverify_args.php';
 session_start();
 
 // 获取信息
-$uid = require_args($_POST['uid']);
+$uid = htmlspecialchars(require_args($_POST['uid']));
 $psw = require_args($_POST['psw']);
 
 $user = new User($uid, $psw);

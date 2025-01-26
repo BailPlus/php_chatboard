@@ -58,8 +58,14 @@ function display_msg(Message $msg):void {
                             <?= count($msg->likes) ?>
                         </button>
                     </form>
-                    <button onclick="comment('<?= $msg->msgid ?>');">评论</button>
-                    <button>删除</button>
+                    <button onclick="comment('<?= $msg->msgid ?>');">
+                        <img src="/img/comment.jpeg" width="25" height="25">
+                    </button>
+                    <?php if ($msg->posterid === $user->uid): ?>
+                        <button>
+                            <img src="/img/delete.png" width="25" height="25">
+                        </button>
+                    <?php  endif ?>
                 </div>
             <?php endif; ?>
             <ul class="comment-list">
@@ -212,7 +218,7 @@ function display_msg(Message $msg):void {
 
             .comment-buttons {
                 display: flex;
-                justify-content: space-between;
+                /* justify-content: space-between; */
             }
         </style>
         <script>
