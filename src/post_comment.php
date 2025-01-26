@@ -9,25 +9,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libcsrftoken.php';
 verify_csrftoken();
 
 $comment = str_replace("\n",'<br>',htmlspecialchars(require_args($_POST['comment'])));
-$roomid = require_args($_GET['roomid']);
+$chatroom = Chatroom::from_roomid(require_args($_GET['roomid']));
 $comment_father = Message::from_msgid($_GET['msgid']);
 
-if ($roomid !== '' && !in_array($roomid,$user->friends)) {
-    header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
-    die('这不是你的聊天室');
-};
+if (!$chatroom) { header('HTTP/1.1 404 No Such Chatroom'); die(); }
+if ($chatroom->roomid !== '' && !in_array($chatroom->roomid,$user->friends)) { header('HTTP/1.1 403 This Chatroom Isn\'t Yours'); die(); }
 
-$chatroom = Chatroom::from_roomid($roomid);
-$msg = new Message($roomid,$user->uid,$comment,$chatroom->msg_head_ptr) ;
-$msg->save();
 
 if ($comment_father) {  // 评论
-    if ($comment_father->roomid === $roomid) $comment_father->comment($msg->msgid);
-    else {
-        header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
-        die('这不是你的聊天室');
-    }
+    if ($comment_father->roomid === $chatroom->roomid) $comment_father->comment($user->uid,$comment);
+    else { header('HTTP/1.1 400 Can\'t Comment Across Chatrooms'); die(); }
 } else {    // 发表消息
+    $msg = new Message($chatroom->roomid,$user->uid,$comment,$chatroom->msg_head_ptr) ;
+    $msg->save();    
     $chatroom->msg_head_ptr = $msg->msgid;
     $chatroom->save();
 }

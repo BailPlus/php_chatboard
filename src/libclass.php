@@ -31,7 +31,7 @@ class User {
         $obj = unserialize($string);
         return $obj;
     }
-    public static function from_uid(string $uid) {
+    public static function from_uid($uid) {
         return get_user($uid);
     }
 }
@@ -44,7 +44,7 @@ class Message {
     public string $posterid;
     public int $posttime;
     public array $likes = [];
-    public array $comments = [];
+    public string $last_comment_msgid = '';
     public function __construct(string $roomid, string $posterid, string $content, string $last_msgid) {
         $this->msgid = uniqid();
         $this->last_msgid = $last_msgid;
@@ -57,15 +57,17 @@ class Message {
         if (getmsg($this->msgid)) updatemsg($this);
         else sql_newmsg($this);
     }
-    public function comment(string $msgid):void {
-        array_push($this->comments, $msgid);
+    public function comment(string $uid,string $content):void {
+        $comment_msg = new Message($this->roomid,$uid,$content,$this->last_comment_msgid);
+        $comment_msg->save();
+        $this->last_comment_msgid = $comment_msg->msgid;
         $this->save();
     }
     static function from_serialized(string $string): Message {
         $obj = unserialize($string);
         return $obj;
     }
-    static function from_msgid(string $msgid) {
+    static function from_msgid($msgid) {
         return getmsg($msgid);
     }
 }
@@ -85,7 +87,7 @@ class Chatroom {
         $obj = unserialize($string);
         return $obj;
     }
-    public static function from_roomid(string $roomid) {
+    public static function from_roomid($roomid) {
         return get_chatroom($roomid);
     }
 }

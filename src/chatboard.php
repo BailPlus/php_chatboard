@@ -22,6 +22,18 @@ if ($roomid !== '' && !in_array($roomid,$user->friends)) {
 
 $csrftoken = get_csrftoken();
 
+function list_all_messages(string $msg_head_ptr):array {
+    $msgid = $msg_head_ptr;
+    $msgs = [];
+    while ($msgid) {
+        $msg = Message::from_msgid($msgid);
+        if (!$msg) die('读取消息时出错');
+        array_push($msgs, $msg);
+        $msgid = $msg->last_msgid;
+    }
+    return $msgs;
+}
+
 function display_msg(Message $msg):void {
     global $user,$csrftoken;
     $poster = User::from_uid($msg->posterid); ?>
@@ -51,22 +63,12 @@ function display_msg(Message $msg):void {
                 </div>
             <?php endif; ?>
             <ul class="comment-list">
-                <?php foreach ($msg->comments as $submsg) display_msg(Message::from_msgid($submsg)); ?>
+                <?php foreach (list_all_messages($msg->last_comment_msgid) as $submsg) display_msg(Message::from_msgid($submsg->msgid)); ?>
             </ul>
         </div>
     </li>
 <?php
 } 
-
-$msg_head_ptr = $chatroom->msg_head_ptr;
-$msgid = $msg_head_ptr;
-$msgs = [];
-while ($msgid) {
-    $msg = Message::from_msgid($msgid);
-    if (!$msg) die('读取消息时出错');
-    array_push($msgs, $msg);
-    $msgid = $msg->last_msgid;
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -241,7 +243,7 @@ while ($msgid) {
             <?php endif; ?>
 
             <ul class="comment-list">
-                <?php foreach ($msgs as $msg) display_msg($msg);?>
+                <?php foreach (list_all_messages($chatroom->msg_head_ptr) as $msg) display_msg($msg);?>
             </ul>
         </div>
     </body>
