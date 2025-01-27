@@ -15,10 +15,14 @@ if ($user) {
 
 $roomid = (string)$_GET['roomid'];
 $chatroom = Chatroom::from_id($roomid);
-if ($roomid !== '' && !in_array($roomid,$user->friends)) {
+if ($roomid !== '' && !in_array($roomid,$user->friends) && !$user->isadmin) {
     header('HTTP/1.1 403 This Chatroom Isn\'t Yours');
     die('这不是你的聊天室');
-};
+}
+if (!$chatroom) {
+    header('HTTP/1.1 404 No Such Chatroom');
+    die('聊天室不存在');
+}
 
 $csrftoken = get_csrftoken();
 

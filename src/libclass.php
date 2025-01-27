@@ -155,14 +155,13 @@ class RefreshToken {
         return $obj;
     }
     public static function from_id($tokenid) {
-        $obj = get_refresh_token($tokenid);
         $token = get_refresh_token($tokenid);
         if (!$token) return false;
         if ($token->expire_time < time()) {
             $token->delete();
             return false;
         }
-        $token->delete();
-        return $obj;
+        $token->delete();   // 过河拆桥
+        return $token;
     }
 }
