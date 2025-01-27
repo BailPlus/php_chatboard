@@ -155,11 +155,45 @@ function update_chatroom(Chatroom $chatroom):void {
     // if (!get_chatroom($chatroom->roomid)) die('聊天室不存在');
     global $conn;
     $serialized_chatroom = serialize($chatroom);
-    $sql = 'UPDATE '.SQL_CHATROOM_TABLE.' SET '.SQL_CHATROOM_OBJ_COLUMN.' = ? WHERE roomid = "'.$chatroom->roomid.'";';
+    $sql = 'UPDATE '.SQL_CHATROOM_TABLE.' SET '.SQL_CHATROOM_OBJ_COLUMN.' = ? WHERE '.SQL_CHATROOM_ROOMID_COLUMN.' = "'.$chatroom->roomid.'";';
     $stmt = $conn->prepare($sql);
     if (!$stmt) die('连接失败');
     $stmt->bind_param('s',$serialized_chatroom);
     $sql_exec_status = $stmt->execute();
     close($stmt);
+    if (!$sql_exec_status) die('更新失败');
+}
+
+function get_refresh_token($tokenid){
+    global $conn;
+    $sql = 'SELECT '.SQL_REFRESH_TOKEN_OBJ_COLUMN.' FROM '.SQL_REFRESH_TOKEN_TABLE.' WHERE '.SQL_REFRESH_TOKENID_COLUMN.' = ?';
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) die('连接失败');
+    $stmt->bind_param('s', $tokenid);
+    $stmt->execute();
+    $serialized_token = $stmt->get_result()->fetch_assoc()[SQL_REFRESH_TOKEN_OBJ_COLUMN];
+    if (!$serialized_token) return false;
+    $result = RefreshToken::from_serialized($serialized_token);
+    if (!$result) return false;
+    close($stmt);
+    return $result;
+}
+
+function create_refresh_token(RefreshToken $refresh_token):void {
+    global $conn;
+    $serialized_refresh_token = serialize($refresh_token);
+    $sql = 'INSERT INTO '.SQL_REFRESH_TOKEN_TABLE.' ('.SQL_REFRESH_TOKENID_COLUMN.', '.SQL_REFRESH_TOKEN_OBJ_COLUMN.') VALUES (?, ?);';
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) die('连接失败');
+    $stmt->bind_param('ss', $refresh_token->tokenid,$serialized_refresh_token);
+    $sql_exec_status = $stmt->execute();
+    close($stmt);
+    if (!$sql_exec_status) die('refresh_token注册失败');
+}
+
+function delete_refresh_token(RefreshToken $refresh_token):void {
+    global $conn;
+    $sql = 'DELETE FROM '.SQL_REFRESH_TOKEN_TABLE.' WHERE '.SQL_REFRESH_TOKENID_COLUMN.' = "'.$refresh_token->tokenid.'";';
+    $sql_exec_status = $conn->query($sql);
     if (!$sql_exec_status) die('更新失败');
 }

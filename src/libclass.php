@@ -4,13 +4,10 @@ if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
 require_once $_SERVER['DOCUMENT_ROOT'].'/libsql.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/libconst.php';
 
-interface From_id_able {
-    public static function from_id($id);
-}
-
-class User implements From_id_able{
+class User {
     public string $uid;
     public string $psw;
+    public string $refresh_token;
     public string $headphoto = DEFAULT_HEADPHOTO;
     public array $friends = [];
     public bool $isadmin = false;
@@ -32,6 +29,10 @@ class User implements From_id_able{
         $return_msg = $friend->save();
         if ($return_msg) die($return_msg);  // 不够原子性啊
     }
+    public function bind_refresh_token(RefreshToken $token): void {
+        $this->refresh_token = $token->tokenid;
+        $this->save();
+    }
     static function from_serialized(string $string): User {
         $obj = unserialize($string);
         return $obj;
@@ -41,7 +42,7 @@ class User implements From_id_able{
     }
 }
 
-abstract class Hangable implements From_id_able{
+abstract class Hangable {
     public string $hang_msg_ptr;
     abstract public function hang(Message $message):void ;
     public function delete_msg(Message $message_want_to_delete): void {
@@ -132,5 +133,36 @@ class Chatroom extends Hangable{
     }
     public static function from_id($roomid) {
         return get_chatroom($roomid);
+    }
+}
+
+class RefreshToken {
+    public string $tokenid;
+    public string $owner;
+    public int $expire_time;
+    public function __construct(User $user) {
+        $this->tokenid = bin2hex(random_bytes(16));
+        $this->owner = $user->uid;
+        $this->expire_time = time() + 86400*3;
+        create_refresh_token($this);
+        $user->bind_refresh_token($this);
+    }
+    public function delete():void {
+        delete_refresh_token($this);
+    }
+    public static function from_serialized(string $string): RefreshToken {
+        $obj = unserialize($string);
+        return $obj;
+    }
+    public static function from_id($tokenid) {
+        $obj = get_refresh_token($tokenid);
+        $token = get_refresh_token($tokenid);
+        if (!$token) return false;
+        if ($token->expire_time < time()) {
+            $token->delete();
+            return false;
+        }
+        $token->delete();
+        return $obj;
     }
 }

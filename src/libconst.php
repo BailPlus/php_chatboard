@@ -28,3 +28,6 @@ const SQL_MSG_OBJ_COLUMN = "obj";
 const SQL_CHATROOM_TABLE = "chatrooms";
 const SQL_CHATROOM_ROOMID_COLUMN = "roomid";
 const SQL_CHATROOM_OBJ_COLUMN = "obj";
+const SQL_REFRESH_TOKEN_TABLE = "refresh_tokens";
+const SQL_REFRESH_TOKENID_COLUMN = "tokenid";
+const SQL_REFRESH_TOKEN_OBJ_COLUMN = "obj";

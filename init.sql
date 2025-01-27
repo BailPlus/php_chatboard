@@ -17,3 +17,8 @@ CREATE TABLE chatroom (
     `roomid` VARCHAR(15) PRIMARY KEY NOT NULL,
     `obj` TEXT NOT NULL
 );
+
+CREATE TABLE refresh_tokens (
+    `tokenid` VARCHAR(32) PRIMARY KEY NOT NULL,
+    `obj` TEXT NOT NULL
+);
