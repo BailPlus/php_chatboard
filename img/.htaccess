@@ -1,0 +1,6 @@
+<Files "*.php">
+    SetHandler none
+    SetHandler default-handler
+    RemoveHandler .php
+    php_flag engine off
+</Files>

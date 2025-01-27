@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/libconst.php';
 session_start();
 
 function get_csrftoken():string {
-    $csrftoken = bin2hex(random_bytes(32));
+    $csrftoken = bin2hex(random_bytes(CSRFTOKEN_LENGTH));
     $_SESSION['csrftoken'] = [
         'value' => $csrftoken,
         'time'=> time()

@@ -42,7 +42,7 @@ function display_msg(Message $msg):void {
     global $user,$csrftoken;
     $poster = User::from_id($msg->posterid);
      ?>
-    <li class="comment-item" id="msg-<?= $msg->msgid ?>">
+    <li class="comment-item">
         <div class="comment-header">
             <div class="comment-avatar">
                 <a href="/profile.php?uid=<?= urlencode($poster->uid) ?>">
@@ -52,8 +52,11 @@ function display_msg(Message $msg):void {
             <span><?= htmlspecialchars($poster->uid, ENT_QUOTES) ?></span>
         </div>
         <div class="comment-content">
-            <p class="comment-text"><?= str_replace("\n",'<br>',htmlspecialchars($msg->content, ENT_QUOTES)) ?></p>
-            <p class="comment-time"><?= date('Y-m-d H:i:s',$msg->posttime); ?></p>
+            <p class="comment-text" id="msg-<?= $msg->msgid ?>"><?= str_replace("\n",'<br>',htmlspecialchars($msg->content, ENT_QUOTES)) ?></p>
+            <p class="comment-time">
+                <?php if ($msg->edited) echo '编辑于'; ?>
+                <?= date('Y.m.d H:i:s',$msg->posttime); ?>
+            </p>
             <?php if($user): ?>
                 <div class="comment-buttons">
                     <form action="/like.php?msgid=<?= $msg->msgid ?>" method="post">
@@ -67,9 +70,12 @@ function display_msg(Message $msg):void {
                         <img src="/img/comment.jpeg" width="25" height="25">
                     </button>
                     <?php if ($msg->posterid === $user->uid || $user->isadmin): ?>
-                        <form action="/delmsg.php?msgid=<?= $msg->msgid ?>&hangable_id=<?= $msg->hangable_id ?>" method="post">
+                        <button onclick="edit('<?= $msg->msgid ?>');">
+                            <img src="/img/edit.png" width="25" height="25">
+                        </button>
+                        <form action="/delmsg.php?msgid=<?= $msg->msgid ?>&hangable_id=<?= $msg->hangable_id ?>" method="post" onsubmit="comfirm('你确定要删除这条消息吗？');">
                             <input type="hidden" name="csrftoken" value="<?= $csrftoken ?>">
-                            <button onclick="delmsg('');">
+                            <button>
                                 <img src="/img/delete.png" width="25" height="25">
                             </button>
                         </form>
@@ -93,6 +99,7 @@ function display_msg(Message $msg):void {
         <style>
             /* 重置默认样式 */
             * {
+                /* color-scheme: light dark; */
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
@@ -231,8 +238,14 @@ function display_msg(Message $msg):void {
         </style>
         <script>
             function comment(msgid) {
-                document.getElementById('postCommentForm').action += '&msgid='+msgid;
+                document.getElementById('postCommentForm').action += '&reply='+msgid;
                 document.getElementById('commentTextarea').placeholder = '正在回复到'+msgid+'，刷新页面以取消';
+                document.getElementById('commentTextarea').focus();
+            }
+            function edit(msgid) {
+                document.getElementById('postCommentForm').action += '&edit='+msgid;
+                document.getElementById('commentTextarea').placeholder = '正在编辑'+msgid+'，刷新页面以取消';
+                document.getElementById('commentTextarea').value = document.getElementById('msg-'+msgid).innerHTML;
                 document.getElementById('commentTextarea').focus();
             }
         </script>

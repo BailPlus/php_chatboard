@@ -46,6 +46,7 @@ abstract class Hangable {
     public string $hang_msg_ptr;
     abstract public function hang(Message $message):void ;
     public function delete_msg(Message $message_want_to_delete): void {
+        // 只是解链，而不从数据库删除消息对象
         $now_msg = Message::from_id($this->hang_msg_ptr);
         if ($now_msg->msgid === $message_want_to_delete->msgid) {
             $this->hang_msg_ptr = $now_msg->last_msgid;
@@ -70,6 +71,7 @@ class Message extends Hangable{
     public string $content;
     public string $posterid;
     public int $posttime;
+    public bool $edited = false;
     public array $likes = [];
     public string $hang_msg_ptr = '';
     public function __construct(string $roomid, string $posterid, string $content, string $last_msgid) {
@@ -97,8 +99,10 @@ class Message extends Hangable{
         $comment_msg->save();
         $this->hang($comment_msg);
     }
-    public function delete():void {
-        // 只是解链，而不从数据库删除消息对象
+    public function edit(string $content):void {
+        $this->content = $content;
+        $this->posttime = time();
+        $this->edited = true;
     }
     public static function from_serialized(string $string): Message {
         $obj = unserialize($string);
