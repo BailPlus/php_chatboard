@@ -8,5 +8,5 @@ $user = User::from_id($refresh_token->owner);
 if (!$user) { header('HTTP/1.1 500 User Who Belongs To Given Token Not Found'); die(); }
 $_SESSION['uid'] = $user->uid;
 $new_refresh_token = new RefreshToken($user);
-setcookie('refresh_token',$new_refresh_token->tokenid,time()+86400*3,'/refresh.php','',true);
+setcookie('refresh_token',$new_refresh_token->tokenid,time()+86400*3,'/refresh.php','',false,true);
 header('Location: /chatboard.php');

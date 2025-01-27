@@ -21,7 +21,7 @@ else {
     $_SESSION['uid'] = $user->uid;
     if ($remember) {
         $refresh_token = new RefreshToken($user);
-        setcookie('refresh_token',$refresh_token->tokenid,time()+86400*3,'/refresh.php','', true);
+        setcookie('refresh_token',$refresh_token->tokenid,time()+86400*3,'/refresh.php','',false,true);
     }
     header('Location: /chatboard.php');
 }

@@ -185,6 +185,21 @@ function display_msg(Message $msg):void {
                 border-radius: 4px;
                 outline: none;
             }
+            .input-container input[type="submit"] {
+                width: 100%;
+                padding: 10px;
+                background-color: #f4f4f4;
+                border: none;
+                border-radius: 4px;
+                color: darkslategrey;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            .input-container input[type="submit"]:hover {
+                background-color: #4cae4c;
+            }
+
 
             /* 留言列表样式 */
             .comment-list {
