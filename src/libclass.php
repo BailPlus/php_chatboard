@@ -60,6 +60,17 @@ abstract class Hangable {
         $now_msg->last_msgid = $message_want_to_delete->last_msgid;
         $now_msg->save();
     }
+    public function list_all_messages():array {
+        $msgid = $this->hang_msg_ptr;
+        $msgs = [];
+        while ($msgid) {
+            $msg = Message::from_id($msgid);
+            if (!$msg) die('读取消息时出错');
+            array_push($msgs, $msg);
+            $msgid = $msg->last_msgid;
+        }
+        return $msgs;
+    }
     abstract public static function from_id($id);
 }
 

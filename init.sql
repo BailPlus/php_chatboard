@@ -1,6 +1,6 @@
-CREATE USER 'php_chatboard'@'localhost' IDENTIFIED BY 'password';
+CREATE USER 'php_chatboard'@'%' IDENTIFIED BY 'password';
 CREATE DATABASE php_chatboard;
-GRANT ALL ON php_chatboard.* TO 'php_chatboard'@'localhost';
+GRANT ALL ON php_chatboard.* TO 'php_chatboard'@'%';
 USE php_chatboard;
 
 CREATE TABLE users (
@@ -14,10 +14,11 @@ CREATE TABLE msg (
     `obj` LONGTEXT NOT NULL
 );
 
-CREATE TABLE chatroom (
+CREATE TABLE chatrooms (
     `roomid` VARCHAR(15) PRIMARY KEY NOT NULL,
     `obj` TEXT NOT NULL
 );
+INSERT INTO chatrooms (roomid,obj) VALUES ('','O:8:"Chatroom":2:{s:6:"roomid";s:0:"";s:12:"hang_msg_ptr";s:0:"";}');
 
 CREATE TABLE refresh_tokens (
     `tokenid` VARCHAR(32) PRIMARY KEY NOT NULL,

@@ -26,18 +26,6 @@ if (!$chatroom) {
 
 $csrftoken = get_csrftoken();
 
-function list_all_messages(string $msg_head_ptr):array {
-    $msgid = $msg_head_ptr;
-    $msgs = [];
-    while ($msgid) {
-        $msg = Message::from_id($msgid);
-        if (!$msg) die('读取消息时出错');
-        array_push($msgs, $msg);
-        $msgid = $msg->last_msgid;
-    }
-    return $msgs;
-}
-
 function display_msg(Message $msg):void {
     global $user,$csrftoken;
     $poster = User::from_id($msg->posterid);
@@ -83,7 +71,7 @@ function display_msg(Message $msg):void {
                 </div>
             <?php endif; ?>
             <ul class="comment-list">
-                <?php foreach (list_all_messages($msg->hang_msg_ptr) as $submsg) display_msg(Message::from_id($submsg->msgid)) ?>
+                <?php foreach ($msg->list_all_messages() as $submsg) display_msg(Message::from_id($submsg->msgid)) ?>
             </ul>
         </div>
     </li>
@@ -285,7 +273,11 @@ function display_msg(Message $msg):void {
             <?php endif; ?>
 
             <ul class="comment-list">
-                <?php foreach (list_all_messages($chatroom->hang_msg_ptr) as $msg) display_msg($msg); ?>
+                <?php 
+                $all_messages = $chatroom->list_all_messages();
+                if ($all_messages) foreach ($all_messages as $msg) display_msg($msg);
+                else echo '还没有消息哦，还不赶紧发一条？';
+                ?>
             </ul>
         </div>
     </body>
