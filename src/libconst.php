@@ -6,7 +6,7 @@ const DEBUG_PSW = '204c571bf26a2d10f143d07e38fe17bb';
 if (DEBUG) ini_set('display_errors', 1);
 else ini_set('display_errors', 0);
 
-const WWWCQUPT_SALT = '0523b3c3c2c54271e1612ec0e590d122';
+const WWWCQUPT_SALT = '???';
 const WWWCQUPT_NONCE_EXPIRE = 3;
 const CSRFTOKEN_EXPIRE = 300;
 const CSRFTOKEN_LENGTH = 16;    // 实际长度是这个值的两倍
@@ -14,7 +14,7 @@ const CSRFTOKEN_LENGTH = 16;    // 实际长度是这个值的两倍
 const DEFAULT_HEADPHOTO = "/img/headphoto/default.svg";
 
 // 数据库配置信息
-const SQL_SERVERNAME = "localhost";
+const SQL_SERVERNAME = "mysql";
 const SQL_USERNAME = "php_chatboard";
 const SQL_PASSWORD = "password";
 const SQL_DBNAME = "php_chatboard";
