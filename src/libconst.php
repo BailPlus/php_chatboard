@@ -1,5 +1,5 @@
 <?php
-if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
+if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) { header("HTTP/1.1 403 Library Can't Execute Directly"); die(); }
 
 const DEBUG = false;
 const DEBUG_PSW = '204c571bf26a2d10f143d07e38fe17bb';
