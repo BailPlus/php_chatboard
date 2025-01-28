@@ -1,5 +1,5 @@
 <?php
-if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) header("HTTP/1.1 403 Forbidden");
+if ($_SERVER['SCRIPT_FILENAME'] === __FILE__) { header("HTTP/1.1 403 Library Can't Execute Directly"); die(); }
 require_once $_SERVER['DOCUMENT_ROOT'].'/libclass.php';
 session_start();
 $user = User::from_id($_SESSION['uid']);
